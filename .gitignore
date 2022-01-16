@@ -1,6 +1,7 @@
 # Adicionales
 *.code-workspace
 *.webloc
+data.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
