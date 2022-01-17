@@ -1,33 +1,57 @@
-from twill.commands import go, fv, submit, find, showlinks, save_html, redirect_output, reset_output
-from getpass import getpass
+#from twill.commands import go, fv, submit, find, showlinks, save_html, redirect_output, reset_output
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from dotenv import dotenv_values
+from time import sleep
+
 
 
 class NoMolestar:
+    def __init__(self):
+        self.service = Service(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(service=self.service )
+        self.config = dotenv_values("data.txt")
+        self.rut = self.search_config('RUT')
+        self.clave_unica = self.search_config('CLAVE_UNICA')
+        self.telephone = self.search_config('TELEFONO')
+        del self.config
+
+    def search_config(self, key):
+        if key in self.config.keys():
+            return self.config[key].strip()
+        return None
+
+
     def start(self):
         print("Cargando...")
         self.login()
         self.input_telephone()
+        print("Cargando...")
         self.block()
-        
-    @staticmethod
-    def login():
-        redirect_output('output.log')
-        go('https://www.sernac.cl/app/consumidor/claveunica.php')
-        reset_output()
-        rut = input("Rut: ")
-        fv('1', 'run', rut)
-        del rut
-        password = getpass("Clave única: ")
-        fv('1', 'password', password)
-        del password
-        redirect_output('output.log')
-        submit('4')
-        reset_output()
-        #TODO: Confirmar que se inició sesión correctamente
+        self.driver.quit()
+
+    def login(self):
+        self.driver.get('https://www.sernac.cl/app/consumidor/claveunica.php')
+        if not (self.rut and self.clave_unica):
+            print("Esperando a que inicies sesión...")
+        if self.rut:
+            self.driver.find_element(By.NAME, 'run').send_keys(self.rut)
+        if self.clave_unica:
+            self.driver.find_element(By.NAME, 'password').send_keys(self.clave_unica)
+        if self.rut and self.clave_unica:
+            self.driver.find_element(By.ID, 'login-submit').click()
+        del self.clave_unica
+        # Espera hasta que logra iniciar sesión
+        WebDriverWait(self.driver, 60*10).until(EC.title_contains("Portal del Consumidor"))
         print("Sesión iniciada correctamente!")
 
     def input_telephone(self, text="Número de teléfono (+56912345678): "):
-        self.telephone = input(text)
+        if not self.telephone:
+            self.telephone = input(text)
         while not self.check_telephone():
             print("Número incorrecto, intenta nuevamente.")
             self.telephone = input(text)
@@ -43,23 +67,27 @@ class NoMolestar:
         return True
 
     def block(self):
-        redirect_output('output.log')
-        go('https://www.sernac.cl/app/consumidor/index.php?c=home&a=nomolestar')
-        save_html('prueba1.html')
-        mqs_link = next(link for link in showlinks() if link.text.strip() == "Me Quiero Salir").url.strip('/')
+        mqs_button = self.driver.find_element(By.XPATH, '/html/body/div[3]/nav/ul/li[5]/a')
+        mqs_link = mqs_button.get_attribute('href').strip('/')
         session_key = mqs_link.split('?p=')[-1]
         no_molestar_link = f"https://www.sernac.cl/no-molestar/solicitudes?p={session_key}"
-        reset_output()
-        print(no_molestar_link)
-        #BUG: Si se abre 'no_molestar_link' desde el navegador todo se despliega bien, sin embargo la línea a
-        # continuación retorna un HTML en blanco. Una posible solición es cambiar twill por selenium.
-        a = go(no_molestar_link)
-        print(a)
-        save_html('prueba2.html')
-        
-        print(find(self.telephone[1:]))
-        #TODO: Si el celular está, utilizar el formulario de bloqueo del número.
-        # Si no está, ingresar al formulario de nuevo número.
+        self.driver.get(no_molestar_link)
+        cards = self.driver.find_elements(By.XPATH, '/html/body/div/div[4]/div/div/div/div[1]/div[3]/div')
+        print(len(cards), cards)
+        print()
+        for card in cards:
+            if card.find_element(By.TAG_NAME, 'button').get_attribute('textContent').strip() == self.telephone:
+                return self._block_telephone_already_added(card)
+        return self._block_new_telephone()
+
+    def _block_telephone_already_added(self, card):
+        print('_block_telephone_already_added')
+        input()
+
+    def _block_new_telephone(self):
+        print('_block_new_telephone')
+        input()
+
 
 
 if __name__ == "__main__":

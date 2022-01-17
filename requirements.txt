@@ -1,4 +1,3 @@
-twill
 webdriver-manager
 selenium
 python-dotenv
