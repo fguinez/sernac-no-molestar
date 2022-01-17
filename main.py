@@ -125,7 +125,7 @@ class NoMolestar:
         block_url = f"https://www.sernac.cl/no-molestar/solicitudes/new?p={self.session_key}"
         self.driver.get(block_url)
         # Ingresa número de teléfono
-        self.driver.find_element(By.ID, 'telefono-sub')
+        self.driver.find_element(By.ID, 'telefono-sub').send_keys(self.telephone[3:])
         self.driver.find_element(By.ID, 'ingresar-bloqueo').click()
         # Guarda elementos recurrentes
         company_selector   = self.driver.find_element(By.ID, 'select2-empresas-container')
@@ -145,6 +145,7 @@ class NoMolestar:
             print("Añadido:", company)
         # Agrega compañías
         self.driver.find_element(By.ID, 'fake-continuar').click()
+        WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, 'finalizar')))
         self.driver.find_element(By.ID, 'finalizar').click()
 
 
