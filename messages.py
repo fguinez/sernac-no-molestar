@@ -70,13 +70,14 @@ def waiting_auto_login():
     print("Iniciando sesión...", end='', flush=True)
 
 def waiting_manual_login():
-    cprint("Esperando a que rellenes tus datos...", 'green', attrs=['bold', 'reverse'], end='', flush=True)
+    cprint("Esperando a que rellene sus datos...", 'green', attrs=['bold', 'reverse'], end=' ', flush=True)
 
 def input_telephone():
-    cprint(" Número de teléfono (+56912345678):", 'green', attrs=['bold', 'reverse'], end=' ', flush=True)
+    cprint("Ingrese su número de teléfono (+56912345678):".center(50), 'green', attrs=['bold', 'reverse'])
+    cprint(" > ", 'green', attrs=['bold', 'reverse'], end=' ', flush=True)
 
 def incorrect_telephone():
-    print("Número incorrecto, intenta nuevamente.")
+    print("Número incorrecto, intente nuevamente.".rjust(50))
 
 def blocking():
     print("\nBloqueando compañías...\n")
