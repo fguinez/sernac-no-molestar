@@ -16,7 +16,8 @@ Para utilizar esta herramienta, debes:
 pip install -r requirements.txt
 ```
 
-6. Detallar las empresas a bloquear en un archivo llamado `empresas.txt` ubicado en la carpeta raíz del repositorio. El repositorio ya viene con un archivo con empresas por defecto, pero puede que quieras modificarlo añadiendo o quitando elementos.
+6. Detallar las empresas a bloquear en un archivo llamado `empresas.txt` ubicado en la carpeta raíz del repositorio. El repositorio ya viene con un archivo con empresas por defecto, pero puede que quieras modificarlo añadiendo o quitando elementos. Puedes encontrar más sobre el funcionamiento de este archivo en [esta página](https://github.com/fguinez/sernac-no-molestar/wiki/empresas.txt) de la wiki.
+
 7. _Opcional:_ Añadir tus datos en un archivo `data.txt` que contenga:
 
    ```
