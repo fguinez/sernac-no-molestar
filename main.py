@@ -10,13 +10,16 @@ import os
 import sys
 
 
+application_path = os.path.dirname(sys.executable)
+
+
 class NoMolestar:
-    def __init__(self, companies_filename='empresas.txt'):
+    def __init__(self, companies_filename='empresas.txt', data_filename='data.txt'):
         messages.charging_drivers()
         self.service = Service(ChromeDriverManager(log_level=0).install())
         self.driver = webdriver.Chrome(service=self.service)
         messages.OK()
-        self.config = dotenv_values("data.txt")
+        self.config = dotenv_values(f"{application_path}/{data_filename}")
         self.rut = self.search_config('RUT')
         self.clave_unica = self.search_config('CLAVE_UNICA')
         self.telephone = self.search_config('TELEFONO')
@@ -38,7 +41,7 @@ class NoMolestar:
     @staticmethod
     def read_companies(companies_filename):
         companies = set()
-        with open(companies_filename, 'r') as file:
+        with open(f"{application_path}/{companies_filename}", 'r') as file:
             for line in file.readlines():
                 line = line.strip()
                 if line and not line.startswith("#"):
@@ -72,7 +75,7 @@ class NoMolestar:
         WebDriverWait(self.driver, 60 *
                       10).until(EC.title_contains("Portal del Consumidor"))
         messages.OK()
-        
+
     def input_telephone(self):
         if not self.telephone:
             messages.input_telephone()
@@ -180,8 +183,6 @@ class NoMolestar:
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'finalizar')))
         self.driver.find_element(By.ID, 'finalizar').click()
-
-
 
 
 if __name__ == "__main__":
