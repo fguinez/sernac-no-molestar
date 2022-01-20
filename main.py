@@ -10,7 +10,13 @@ import os
 import sys
 
 
-application_path = os.path.dirname(sys.executable)
+# Si la ejecución es desde el archivo '.py', no es necesario transformar los paths
+# en absolutos. En caso contrario, application_path añade el componente absoluto
+# cuando es necesario.
+if 'python' == os.path.basename(sys.executable)[:6].lower():
+    application_path = ""
+else:
+    application_path = os.path.dirname(sys.executable) + '/'
 
 
 class NoMolestar:
@@ -19,7 +25,7 @@ class NoMolestar:
         self.service = Service(ChromeDriverManager(log_level=0).install())
         self.driver = webdriver.Chrome(service=self.service)
         messages.OK()
-        self.config = dotenv_values(f"{application_path}/{data_filename}")
+        self.config = dotenv_values(f"{application_path}{data_filename}")
         self.rut = self.search_config('RUT')
         self.clave_unica = self.search_config('CLAVE_UNICA')
         self.telephone = self.search_config('TELEFONO')
@@ -41,11 +47,15 @@ class NoMolestar:
     @staticmethod
     def read_companies(companies_filename):
         companies = set()
-        with open(f"{application_path}/{companies_filename}", 'r') as file:
-            for line in file.readlines():
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    companies.add(line)
+        try:
+            with open(f"{application_path}{companies_filename}", 'r') as file:
+                for line in file.readlines():
+                    line = line.strip()
+                    if line and not line.startswith("#"):
+                        companies.add(line)
+        except FileNotFoundError:
+            messages.error_companies_not_found(companies_filename)
+            sys.exit(1)
         return companies
 
     def start(self):
