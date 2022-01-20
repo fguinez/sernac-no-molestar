@@ -1,14 +1,13 @@
-#from twill.commands import go, fv, submit, find, showlinks, save_html, redirect_output, reset_output
-from email import message
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import dotenv_values
 import messages
+import os
+import sys
 
 
 class NoMolestar:
