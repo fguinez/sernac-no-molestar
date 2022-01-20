@@ -1,3 +1,5 @@
+from audioop import reverse
+from attr import attr
 from termcolor import cprint
 
 
@@ -81,6 +83,8 @@ def incorrect_telephone():
 
 def blocking():
     print("\nBloqueando compañías...\n")
+    cprint("No interactue con el navegador para evitar errores", attrs=['reverse'])
+    print()
 
 def block_company(company, i, total):
     cprint(f"{i}. Bloqueado: ", attrs=['bold'], end='')
@@ -97,3 +101,12 @@ def end():
 ——————————————————————————————————————————————————
 ——————————————————————————————————————————————————
 """)
+
+def error_companies_not_found(companies_filename):
+    cprint("\nERROR:", 'red', attrs=['bold', 'reverse'], end=' ')
+    cprint(f"Archivo '{companies_filename}' no encontrado.", 'red', attrs=['bold'])
+    cprint(f"{' '*6} Debes añadir un archivo '{companies_filename}' en el directorio", 'red', attrs=['bold'])
+    cprint(f"{' '*6} para continuar. Si no sabes cómo, revisa:", 'red', attrs=['bold'])
+    cprint(f"{' '*6} github.com/fguinez/sernac-no-molestar/wiki/empresas.txt\n", 'red', attrs=['underline'])
+    
+    
