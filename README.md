@@ -19,14 +19,15 @@ pip install -r requirements.txt
 6. Detallar las empresas a bloquear en un archivo llamado `empresas.txt` ubicado en la carpeta raíz del repositorio. El repositorio ya viene con un archivo con empresas por defecto, pero puede que quieras modificarlo añadiendo o quitando elementos.
 7. _Opcional:_ Añadir tus datos en un archivo `data.txt` que contenga:
 
-    ```
-    RUT=[Tu RUT en formato 123456780]
-    CLAVE_UNICA=[Tu clave unica]
-    TELEFONO=[Tu número de celular en formato +56912345678]
-    ```
-    Este paso tiene la única finalidad de que la ejecución sea totalmente automática. Si no agregas alguno de estos datos, de todas formas el programa te los pedirá durante la ejecución.
-  
-    Este programa no recolecta información de ningún tipo. Sin embargo, para tu seguridad y tranquilidad, tienes la opción de añadir información parcial en `data.txt`. Por ejemplo, puedes añadir solo tu rut y número de teléfono (omitiendo clave única), para así luego ingresar tu clave única directamente en la página del Sernac cuando el programa te lo indique.
+   ```
+   RUT=[Tu RUT en formato 123456780]
+   CLAVE_UNICA=[Tu clave unica]
+   TELEFONO=[Tu número de celular en formato +56912345678]
+   ```
+
+   Este paso tiene la única finalidad de que la ejecución sea totalmente automática. Si no agregas alguno de estos datos, de todas formas el programa te los pedirá durante la ejecución.
+
+   Este programa no recolecta información de ningún tipo. Sin embargo, para tu seguridad y tranquilidad, tienes la opción de añadir información parcial en `data.txt`. Por ejemplo, puedes añadir solo tu rut y número de teléfono (omitiendo clave única), para así luego ingresar tu clave única directamente en la página del Sernac cuando el programa te lo indique.
 
 8. Finalmente, puedes ejecutar el programa con el comando:
 
