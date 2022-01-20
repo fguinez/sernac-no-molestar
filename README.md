@@ -1,4 +1,4 @@
-# sernac-no-molestar
+# AutoNoMolestar
 
 Bloquea automáticamente las principales empresas de spam chilenas
 
