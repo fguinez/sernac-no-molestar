@@ -3,6 +3,8 @@
 *.webloc
 data.txt
 img
+scrap
+scrapper.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
