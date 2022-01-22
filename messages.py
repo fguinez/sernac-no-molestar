@@ -49,8 +49,8 @@ def charging_drivers():
     print("Buscando drivers...", end='', flush=True)
 
 
-def charging_companies():
-    print("Cargando compañías...", end='', flush=True)
+def charging_companies(filename):
+    print(f"Cargando compañías desde '{filename}'...", end='', flush=True)
 
 
 def charging_login():
@@ -63,9 +63,9 @@ def OK():
     cprint("OK", 'green')
 
 
-def total_companies(num, filename):
+def total_companies(num):
     print(
-        f"Se bloquearán un total de {num} compañías,\nobtenidas desde {filename}"
+        f"Se bloquearán un total de {num} compañías"
     )
 
 def waiting_auto_login():

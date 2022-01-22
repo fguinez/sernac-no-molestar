@@ -29,11 +29,12 @@ class NoMolestar:
         self.rut = self.search_config('RUT')
         self.clave_unica = self.search_config('CLAVE_UNICA')
         self.telephone = self.search_config('TELEFONO')
+        self.companies_filename = self.search_companies_file(companies_filename)
         del self.config
-        messages.charging_companies()
-        self.companies = self.read_companies(companies_filename)
+        messages.charging_companies(self.companies_filename)
+        self.companies = self.read_companies()
         messages.OK()
-        messages.total_companies(self.n_companies, companies_filename)
+        messages.total_companies(self.n_companies)
 
     @property
     def n_companies(self):
@@ -44,17 +45,37 @@ class NoMolestar:
             return self.config[key].strip()
         return None
 
-    @staticmethod
-    def read_companies(companies_filename):
+    def search_companies_file(self, companies_filename):
+        # Intenta con el nombre de archivo en 'data.txt'
+        self.companies_filename = self.search_config('ARCHIVO_EMPRESAS')
+        if self.companies_filename:
+            if os.path.exists(f"{application_path}{self.companies_filename}"):
+                return self.companies_filename
+        # Intenta con 'empresas.txt'
+        self.companies_filename = companies_filename
+        if os.path.exists(f"{application_path}{self.companies_filename}"):
+                return self.companies_filename
+        # Intenta con algún archivo de nombre 'empresas-[LoQueSea].txt'
+        if application_path:
+            ls = os.listdir(application_path)
+        else:
+            ls = os.listdir()
+        for filename in ls:
+            if filename[:9] == "empresas-" and filename[-4:] == ".txt":
+                self.companies_filename = filename
+                return self.companies_filename
+        return None
+
+    def read_companies(self):
         companies = set()
         try:
-            with open(f"{application_path}{companies_filename}", 'r') as file:
+            with open(f"{application_path}{self.companies_filename}", 'r') as file:
                 for line in file.readlines():
                     line = line.strip()
                     if line and not line.startswith("#"):
                         companies.add(line)
         except FileNotFoundError:
-            messages.error_companies_not_found(companies_filename)
+            messages.error_companies_not_found(self.companies_filename)
             sys.exit(1)
         return companies
 
