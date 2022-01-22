@@ -3,6 +3,9 @@ from attr import attr
 from termcolor import cprint
 
 
+# main.py
+
+
 def welcome():
     print(
         """
@@ -110,3 +113,65 @@ def error_companies_not_found(companies_filename):
     cprint(f"{' '*6} github.com/fguinez/sernac-no-molestar/wiki/empresas.txt\n", 'red', attrs=['underline'])
     
     
+
+# scrapper.py
+
+def welcome_scrapper():
+    cprint("Asistente de scrapping".center(50), attrs=['reverse'])
+    print("""
+    Estás ejecutando el módulo de scrapping de   
+    ANM, el cual está diseñado para ayudarte a   
+    formar tus propias listas de empresas para   
+    bloquear.
+
+    Si lo que deseas es bloquear una lista ya    
+    preparada de empresas, cierra este módulo    
+    precionando Ctrl+C y ejecuta:
+                 python main.py                 
+
+    Para utilizar correctamente este módulo,
+    es necesario editar previamente el código
+    de 'scrapper.py' en el espacio comentado
+    dentro del método 'scrap'.
+""")
+    cprint(" ".center(50), attrs=['reverse'])
+    print()
+
+def files_report(results_filename, searches_filename, companies_filename):
+    cprint("\nReporte de archivos:", attrs=['bold'])
+    print("- Se omitirán las búsquedas previas presentes en:")
+    cprint(f"    {searches_filename}", 'blue')
+    print("- Las búsquedas realizadas se añadirán al final de:")
+    cprint(f"    {searches_filename}", 'blue')
+    print("- Los resultados se añadirán al final de:")
+    cprint(f"    {results_filename}", 'blue')
+    print("- La lista de empresas considerará las presentes\n  previamente en:")
+    cprint(f"    {companies_filename}", 'blue')
+    print("- Al final de la ejecución, se escribirá toda la\n  lista de empresas encontradas en:")
+    cprint(f"    {companies_filename}", 'blue')
+
+def previous_activity_report(n_companies, n_searches):
+    cprint("\nReporte de actividad previa:", attrs=['bold'])
+    print(f"- Compañías previas: {n_companies}")
+    print(f"- Búsquedas previas: {n_searches}")
+    print()
+
+def warning_dont_call_analyze_search():
+    cprint("\nADVERTENCIA:", 'yellow', attrs=['bold', 'reverse'], end=' ')
+    cprint(f"Para utilizar correctamente este", 'yellow', attrs=['bold'])
+    cprint(
+        """             módulo, es necesario editar de forma
+             previa el código de 'scrapper.py' en
+             el espacio comentado dentro del método
+             'scrap'.
+            
+             Esta advertencia aparece cuando no
+             realizas ningún llamado al método
+             analyze_search.
+        """,
+        'yellow',
+        attrs=['bold']
+    )
+
+def saved_companies(n_companies):
+    print(f"\nCompañias guardadas: {n_companies}")
