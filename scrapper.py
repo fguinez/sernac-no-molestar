@@ -175,7 +175,6 @@ class NoMolestar:
         # Edita libremente este espacio con llamados al método analyze_search
         # Puedes guiarte por los ejemplos de más arriba si así lo deseas.
         #
-        self.analyze_search('ola')
         # < TÉRMINO DEL ESPACIO DE EDICICIÓN>
         #######################################################################
         #######################################################################
