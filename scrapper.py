@@ -42,6 +42,8 @@ class NoMolestar:
         }
         #######################################################################
         messages.previous_activity_report(self.n_companies, len(self.searches))
+        self.previous_n_companies = self.n_companies
+        self.n_new_searches = 0
         self.analyze_search_WasCalled = False
 
     @property
@@ -85,8 +87,7 @@ class NoMolestar:
         self.login()
         self.find_session_key()
         self.scrap()
-        self.driver.quit()
-        messages.end()
+        self.end()
 
     def login(self):
         messages.charging_login()
@@ -143,7 +144,7 @@ class NoMolestar:
         company_selector = self.driver.find_element(
             By.ID, 'select2-empresas-container')
         company_selector.click()
-        messages.blocking()
+        messages.looking()
         # Guarda campo de ingreso de texto
         self.search_companies = self.driver.find_element(
             By.CLASS_NAME, 'select2-search__field')
@@ -154,11 +155,11 @@ class NoMolestar:
         #            una consonante, seguida de una vocal, seguida de una
         #            consonante.
         #
-        # for c1 in self.chars['cons']:
-        #    for c2 in self.chars['vcls']:
-        #        for c3 in self.chars['cons']:
-        #            search = f"{c1}{c2}{c3}"
-        #            self.analyze_search(search)
+        #for c1 in self.chars['cons']:
+        #   for c2 in self.chars['vcls']:
+        #       for c3 in self.chars['cons']:
+        #           search = f"{c1}{c2}{c3}"
+        #           self.analyze_search(search)
         #######################################################################
         # Ejemplo 2: Búsquedas mixtas
         #            Este ejemplo realiza una serie de búsquedas mixtas sin
@@ -166,8 +167,8 @@ class NoMolestar:
         #            analyze_search.
         #
         #self.analyze_search(" - ")
-        # self.analyze_search("universidad")
-        # self.analyze_search("hos")
+        #self.analyze_search("universidad")
+        #self.analyze_search("hos")
         #######################################################################
         #######################################################################
         # < INICIO DEL ESPACIO DE EDICICIÓN>
@@ -180,8 +181,7 @@ class NoMolestar:
         #######################################################################
         if not self.analyze_search_WasCalled:
             messages.warning_dont_call_analyze_search()
-        self.write_companies()
-        messages.saved_companies(self.n_companies)
+        
 
     def analyze_search(self, search):
         '''
@@ -200,11 +200,8 @@ class NoMolestar:
             WebDriverWait(self.driver, 60).until(EC.invisibility_of_element_located(
                 (By.CLASS_NAME, 'loading-data')))
         except TimeoutException:
-            print("ERROR: Ha pasado mucho tiempo cargando resultados.")
-            print("       Detenido en la sección:", search)
-            self.write_companies()
-            print(f"companies: {self.n_companies}")
-            self.driver.quit()
+            messages.error_TimeoutException_charging_results(search)
+            self.end()
             exit()
         # Selecciona las opciones
         companies_search = self.driver.find_elements(
@@ -219,6 +216,14 @@ class NoMolestar:
             file.write(search_log + '\n')
         self.companies = self.companies.union(companies)
         self.write_results(companies, search)
+        self.n_new_searches += 1
+
+    def end(self):
+        self.write_companies()
+        self.n_new_companies = self.n_companies - self.previous_n_companies
+        messages.report_end(self.n_companies, self.n_new_companies, self.n_new_searches)
+        self.driver.quit()
+        messages.end()
 
 
 if __name__ == "__main__":

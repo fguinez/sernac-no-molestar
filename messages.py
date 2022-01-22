@@ -156,6 +156,11 @@ def previous_activity_report(n_companies, n_searches):
     print(f"- Búsquedas previas: {n_searches}")
     print()
 
+def looking():
+    print("\nBuscando compañías...\n")
+    cprint("No interactue con el navegador para evitar errores", attrs=['reverse'])
+    print()
+
 def warning_dont_call_analyze_search():
     cprint("\nADVERTENCIA:", 'yellow', attrs=['bold', 'reverse'], end=' ')
     cprint(f"Para utilizar correctamente este", 'yellow', attrs=['bold'])
@@ -173,5 +178,12 @@ def warning_dont_call_analyze_search():
         attrs=['bold']
     )
 
-def saved_companies(n_companies):
-    print(f"\nCompañias guardadas: {n_companies}")
+def error_TimeoutException_charging_results(search):
+    cprint("\nERROR:", 'red', attrs=['bold', 'reverse'], end=' ')
+    cprint("Ha pasado mucho tiempo cargando resultados.", 'red', attrs=['bold'])
+    cprint(f"       Detenido en la búsqueda: {search}", 'red', attrs=['bold'])
+
+def report_end(n_companies, n_new_companies, n_new_searches):
+    cprint("\nReporte final:", attrs=['bold'])
+    print(f"- Compañias guardadas: {n_companies} ({n_new_companies} nuevas)")
+    print(f"- Nuevas búsquedas: {n_new_searches}")
