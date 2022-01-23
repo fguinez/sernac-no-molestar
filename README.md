@@ -32,6 +32,6 @@ pip install -r requirements.txt
 
 8. Finalmente, puedes ejecutar el programa con el comando:
 
-```
-python main.py
-```
+   ```
+   python main.py
+   ```
