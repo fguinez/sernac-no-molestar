@@ -7,7 +7,32 @@ from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import dotenv_values
 import messages
+import argparse
 import os
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-r', '--results', dest="results_filename", default='resultados.txt',
+    help="Archivo de escritura de resultados. Por defecto 'resultados.txt'."
+)
+parser.add_argument(
+    '-b', '--busquedas', dest="searches_filename", default='busquedas.txt',
+    help="Archivo de lectura y escritura de búsquedas realizadas. Por defecto 'busquedas.txt'."
+)
+parser.add_argument(
+    '-e', '--empresas', dest="companies_filename", default='empresas-search.txt',
+    help="Archivo de lectura y escritura de empresas encontradas. Por defecto 'empresas-search.txt'."
+)
+parser.add_argument(
+    '-d', '--data', dest="data_filename", default='data.txt',
+    help="Archivo de lectura de datos. Por defecto 'data.txt'."
+)
+parser.add_argument(
+    '-f', '--folder', dest="folder", default='scrap',
+    help="Carpeta donde se leerán y escribirán todos los archivos antes mencionados. Por defecto 'scrap'."
+)
+args = parser.parse_args()
 
 
 class NoMolestar:
@@ -155,7 +180,7 @@ class NoMolestar:
         #            una consonante, seguida de una vocal, seguida de una
         #            consonante.
         #
-        #for c1 in self.chars['cons']:
+        # for c1 in self.chars['cons']:
         #   for c2 in self.chars['vcls']:
         #       for c3 in self.chars['cons']:
         #           search = f"{c1}{c2}{c3}"
@@ -167,8 +192,8 @@ class NoMolestar:
         #            analyze_search.
         #
         #self.analyze_search(" - ")
-        #self.analyze_search("universidad")
-        #self.analyze_search("hos")
+        # self.analyze_search("universidad")
+        # self.analyze_search("hos")
         #######################################################################
         #######################################################################
         # < INICIO DEL ESPACIO DE EDICICIÓN>
@@ -181,7 +206,6 @@ class NoMolestar:
         #######################################################################
         if not self.analyze_search_WasCalled:
             messages.warning_dont_call_analyze_search()
-        
 
     def analyze_search(self, search):
         '''
@@ -221,7 +245,8 @@ class NoMolestar:
     def end(self):
         self.write_companies()
         self.n_new_companies = self.n_companies - self.previous_n_companies
-        messages.report_end(self.n_companies, self.n_new_companies, self.n_new_searches)
+        messages.report_end(
+            self.n_companies, self.n_new_companies, self.n_new_searches)
         self.driver.quit()
         messages.end()
 
@@ -229,5 +254,8 @@ class NoMolestar:
 if __name__ == "__main__":
     messages.welcome()
     messages.welcome_scrapper()
-    no_molestar = NoMolestar()
+    no_molestar = NoMolestar(
+        args.results_filename, args.searches_filename, args.companies_filename,
+        args.data_filename, args.folder
+    )
     no_molestar.start()
