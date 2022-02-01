@@ -89,8 +89,8 @@ def blocking():
     cprint("No interactue con el navegador para evitar errores", attrs=['reverse'])
     print()
 
-def block_company(company, i, total):
-    cprint(f"{i}. Bloqueado: ", attrs=['bold'], end='')
+def enter_company(company, i, total):
+    cprint(f"{i}. Ingresado: ", attrs=['bold'], end='')
     print(company.ljust(11))
     cprint(f"({i}/{total})", end='\r', attrs=['reverse'])
 

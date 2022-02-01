@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import dotenv_values
 import messages
@@ -82,10 +83,9 @@ class NoMolestar:
     def start(self):
         self.login()
         self.input_telephone()
+        self.find_session_key()
         self.block()
-        messages.success()
-        self.driver.quit()
-        messages.end()
+        self.end()
 
     def login(self):
         messages.charging_login()
@@ -126,13 +126,15 @@ class NoMolestar:
             return False
         return True
 
-    def block(self):
+    def find_session_key(self):
         mqs_button = self.driver.find_element(
             By.XPATH, '/html/body/div[3]/nav/ul/li[5]/a')
         mqs_url = mqs_button.get_attribute('href').strip('/')
         session_key = mqs_url.split('?p=')[-1]
         self.session_key = session_key
-        no_molestar_url = f"https://www.sernac.cl/no-molestar/solicitudes?p={session_key}"
+
+    def block(self):
+        no_molestar_url = f"https://www.sernac.cl/no-molestar/solicitudes?p={self.session_key}"
         messages.charging_block()
         self.driver.get(no_molestar_url)
         cards = self.driver.find_elements(
@@ -165,17 +167,18 @@ class NoMolestar:
                 By.CLASS_NAME, 'select2-search__field')
             search_companies.send_keys(company)
             # Espera que carguen las opciones
-            WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(
-                (By.CLASS_NAME, 'select2-results__option--highlighted')))
+            WebDriverWait(self.driver, 70).until(EC.invisibility_of_element_located(
+                    (By.CLASS_NAME, 'loading-data')))
             # Selecciona la primera opción
             self.driver.find_element(
                 By.CLASS_NAME, 'select2-results__option--highlighted').click()
             # Añade la compañía seleccionada
             add_company_button.click()
-            messages.block_company(company, i+1, self.n_companies)
+            messages.enter_company(company, i+1, self.n_companies)
         # Agrega compañías
         self.driver.find_element(
             By.XPATH, '/html/body/div/form/div/div/div[3]/button').click()
+        messages.success()
 
     def _block_new_telephone(self):
         # Redirige al formulario
@@ -201,19 +204,29 @@ class NoMolestar:
                 By.CLASS_NAME, 'select2-search__field')
             search_companies.send_keys(company)
             # Espera que carguen las opciones
-            WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(
-                (By.CLASS_NAME, 'select2-results__option--highlighted')))
+            try:
+                WebDriverWait(self.driver, 70).until(EC.invisibility_of_element_located(
+                    (By.CLASS_NAME, 'loading-data')))
+            except TimeoutException:
+                messages.error_TimeoutException_charging_results(company)
+                self.end()
+                exit()
             # Selecciona la primera opción
             self.driver.find_element(
                 By.CLASS_NAME, 'select2-results__option--highlighted').click()
             # Añade la compañía seleccionada
             add_company_button.click()
-            messages.block_company(company, i+1, self.n_companies)
+            messages.enter_company(company, i+1, self.n_companies)
         # Agrega compañías
         self.driver.find_element(By.ID, 'fake-continuar').click()
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'finalizar')))
         self.driver.find_element(By.ID, 'finalizar').click()
+        messages.success()
+
+    def end(self):
+        self.driver.quit()
+        messages.end()
 
 
 if __name__ == "__main__":
