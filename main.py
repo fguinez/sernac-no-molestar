@@ -1,3 +1,4 @@
+from email import message
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -219,17 +220,26 @@ class NoMolestar:
                 messages.error_TimeoutException_charging_results(company)
                 self.end()
                 exit()
-            # Selecciona la primera opción
-            try:
-                result = self.driver.find_element(
-                    By.CLASS_NAME, 'select2-results__option--highlighted')
-            except NoSuchElementException:
+            # Busca la opción deseada
+            results = self.driver.find_elements(By.CLASS_NAME, 'select2-results__option')
+            if results[0].text == "Sin resultados":
                 messages.not_found_company(company, i+1, self.n_companies)
+                company_selector.click()
                 continue
-            result.click()
+            found = False
+            for result in results:
+                if result.text == company:
+                    result.click()
+                    found = True
+                    break
+            if found:
+                messages.enter_company(company, i+1, self.n_companies)
+            else:
+                company_alt = results[0].text
+                messages.not_found_company_exactly(company, company_alt, i+1, self.n_companies)
+            input()
             # Añade la compañía seleccionada
             add_company_button.click()
-            messages.enter_company(company, i+1, self.n_companies)
             self.companies_entered += 1
         # Agrega compañías
         self.driver.find_element(By.ID, 'fake-continuar').click()

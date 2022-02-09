@@ -99,6 +99,14 @@ def not_found_company(company, i, total):
     print(company)
     accountant(i, total)
 
+def not_found_company_exactly(company, company_alt, i, total):
+    cprint(f"{i}. No encontrado: ", 'yellow', attrs=['bold'], end='')   
+    print(company)
+    cprint(f"{' '*len(str(i))}  Agregado ", 'yellow', end='')   
+    print(company_alt, end='')
+    cprint(f" en su lugar", 'yellow')
+    accountant(i, total)
+
 def accountant(i, total):
     cprint(f"({i}/{total})", end='\r', attrs=['reverse'])
 
