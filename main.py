@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import dotenv_values
 import messages
@@ -168,7 +168,12 @@ class NoMolestar:
             # Ingresa compañía
             search_companies = self.driver.find_element(
                 By.CLASS_NAME, 'select2-search__field')
-            search_companies.send_keys(company)
+            try:
+                search_companies.send_keys(company)
+            except WebDriverException:
+                messages.error_writing_company(company)
+                company_selector.click()
+                continue
             # Espera que carguen las opciones
             WebDriverWait(self.driver, 70).until(EC.invisibility_of_element_located(
                 (By.CLASS_NAME, 'loading-data')))
@@ -219,7 +224,12 @@ class NoMolestar:
             # Ingresa compañía
             search_companies = self.driver.find_element(
                 By.CLASS_NAME, 'select2-search__field')
-            search_companies.send_keys(company)
+            try:
+                search_companies.send_keys(company)
+            except WebDriverException:
+                messages.error_writing_company(company)
+                company_selector.click()
+                continue
             # Espera que carguen las opciones
             try:
                 WebDriverWait(self.driver, 70).until(EC.invisibility_of_element_located(

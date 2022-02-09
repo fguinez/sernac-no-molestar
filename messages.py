@@ -128,6 +128,10 @@ def error_companies_not_found(companies_filename):
     cprint(f"{' '*6} para continuar. Si no sabes cómo, revisa:", 'red', attrs=['bold'])
     cprint(f"{' '*6} github.com/fguinez/sernac-no-molestar/wiki/empresas.txt\n", 'red', attrs=['underline'])
     
+def error_writing_company(company):
+    cprint("\nERROR:", 'red', attrs=['bold', 'reverse'], end=' ')
+    cprint(f"Ha ocurrido un error ingresando ", 'red', attrs=['bold'], end='')
+    cprint(company, attrs=['bold'])
     
 
 # scrapper.py
