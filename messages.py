@@ -91,12 +91,20 @@ def blocking():
 
 def enter_company(company, i, total):
     cprint(f"{i}. Ingresado: ", attrs=['bold'], end='')
-    print(company.ljust(11))
+    print(company)
+    accountant(i, total)
+
+def not_found_company(company, i, total):
+    cprint(f"{i}. No encontrado: ", 'red', attrs=['bold'], end='')   
+    print(company)
+    accountant(i, total)
+
+def accountant(i, total):
     cprint(f"({i}/{total})", end='\r', attrs=['reverse'])
 
-def success():
+def success(n):
     print('\n')
-    cprint("¡Compañías bloqueadas con éxito!".center(50), 'green', attrs=['bold'])
+    cprint(f"¡{n} compañías bloqueadas con éxito!".center(50), 'green', attrs=['bold'])
 
 def end():
     print("""

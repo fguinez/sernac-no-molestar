@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import dotenv_values
 import messages
@@ -30,12 +30,14 @@ class NoMolestar:
         self.rut = self.search_config('RUT')
         self.clave_unica = self.search_config('CLAVE_UNICA')
         self.telephone = self.search_config('TELEFONO')
-        self.companies_filename = self.search_companies_file(companies_filename)
+        self.companies_filename = self.search_companies_file(
+            companies_filename)
         del self.config
         messages.charging_companies(self.companies_filename)
         self.companies = self.read_companies()
         messages.OK()
         messages.total_companies(self.n_companies)
+        self.companies_entered = 0
 
     @property
     def n_companies(self):
@@ -55,7 +57,7 @@ class NoMolestar:
         # Intenta con 'empresas.txt'
         self.companies_filename = companies_filename
         if os.path.exists(f"{application_path}{self.companies_filename}"):
-                return self.companies_filename
+            return self.companies_filename
         # Intenta con algún archivo de nombre 'empresas-[LoQueSea].txt'
         if application_path:
             ls = os.listdir(application_path)
@@ -168,17 +170,23 @@ class NoMolestar:
             search_companies.send_keys(company)
             # Espera que carguen las opciones
             WebDriverWait(self.driver, 70).until(EC.invisibility_of_element_located(
-                    (By.CLASS_NAME, 'loading-data')))
+                (By.CLASS_NAME, 'loading-data')))
             # Selecciona la primera opción
-            self.driver.find_element(
-                By.CLASS_NAME, 'select2-results__option--highlighted').click()
+            try:
+                result = self.driver.find_element(
+                    By.CLASS_NAME, 'select2-results__option--highlighted')
+            except NoSuchElementException:
+                messages.not_found_company(company, i+1, self.n_companies)
+                continue
+            result.click()
             # Añade la compañía seleccionada
             add_company_button.click()
             messages.enter_company(company, i+1, self.n_companies)
+            self.companies_entered += 1
         # Agrega compañías
         self.driver.find_element(
             By.XPATH, '/html/body/div/form/div/div/div[3]/button').click()
-        messages.success()
+        messages.success(self.companies_entered)
 
     def _block_new_telephone(self):
         # Redirige al formulario
@@ -212,17 +220,23 @@ class NoMolestar:
                 self.end()
                 exit()
             # Selecciona la primera opción
-            self.driver.find_element(
-                By.CLASS_NAME, 'select2-results__option--highlighted').click()
+            try:
+                result = self.driver.find_element(
+                    By.CLASS_NAME, 'select2-results__option--highlighted')
+            except NoSuchElementException:
+                messages.not_found_company(company, i+1, self.n_companies)
+                continue
+            result.click()
             # Añade la compañía seleccionada
             add_company_button.click()
             messages.enter_company(company, i+1, self.n_companies)
+            self.companies_entered += 1
         # Agrega compañías
         self.driver.find_element(By.ID, 'fake-continuar').click()
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'finalizar')))
         self.driver.find_element(By.ID, 'finalizar').click()
-        messages.success()
+        messages.success(self.companies_entered)
 
     def end(self):
         self.driver.quit()
