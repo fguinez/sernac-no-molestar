@@ -130,8 +130,9 @@ def error_companies_not_found(companies_filename):
     
 def error_writing_company(company):
     cprint("\nERROR:", 'red', attrs=['bold', 'reverse'], end=' ')
-    cprint(f"Ha ocurrido un error ingresando ", 'red', attrs=['bold'], end='')
-    cprint(company, attrs=['bold'])
+    cprint(company, attrs=['bold'], end='')
+    cprint(f" tiene caracteres desconocidos.", 'red', attrs=['bold'])
+    cprint(f"{' '*6} El bloqueo se debe ingresar manualmente.", 'red', attrs=['bold'])
     
 
 # scrapper.py
