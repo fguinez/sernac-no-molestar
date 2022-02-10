@@ -6,8 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.utils import ChromeType
 from dotenv import dotenv_values
 import messages
 import os
@@ -26,23 +24,8 @@ else:
 class NoMolestar:
     def __init__(self, companies_filename='empresas.txt', data_filename='data.txt'):
         messages.charging_drivers()
-        try:
-            # Chrome
-            self.service = Service(ChromeDriverManager(log_level=0).install())
-            self.driver = webdriver.Chrome(service=self.service)
-        except ValueError:
-            try:
-                # Chronium
-                self.service = Service(ChromeDriverManager(log_level=0, chrome_type=ChromeType.CHROMIUM).install())
-                self.driver = webdriver.Chrome(service=self.service)
-            except ValueError:
-                try:
-                    # Firefox
-                    self.service = GeckoDriverManager().install()
-                    self.driver = webdriver.Firefox(executable_path=self.service)
-                except ValueError:
-                    messages.error_no_supported_browser_installed()
-                    sys.exit(1)
+        self.service = Service(ChromeDriverManager(log_level=0).install())
+        self.driver = webdriver.Chrome(service=self.service)
         messages.OK()
         self.config = dotenv_values(f"{application_path}{data_filename}")
         self.rut = self.search_config('RUT')
@@ -245,10 +228,6 @@ class NoMolestar:
                 search_companies.send_keys(company)
             except WebDriverException:
                 messages.error_writing_company(company)
-                ####################################################
-                with open("error_writing_company.txt", 'a') as file:
-                    file.write(company + '\n')
-                ####################################################
                 company_selector.click()
                 continue
             # Espera que carguen las opciones
@@ -258,15 +237,11 @@ class NoMolestar:
             except TimeoutException:
                 messages.error_TimeoutException_charging_results(company)
                 self.end()
-                sys.exit(1)
+                exit()
             # Busca la opción deseada
             results = self.driver.find_elements(By.CLASS_NAME, 'select2-results__option')
             if results[0].text == "Sin resultados":
                 messages.not_found_company(company, i+1, self.n_companies)
-                ################################################
-                with open("not_found_company.txt", 'a') as file:
-                    file.write(company + '\n')
-                ################################################
                 company_selector.click()
                 continue
             found = False
@@ -280,10 +255,6 @@ class NoMolestar:
             else:
                 company_alt = results[0].text
                 messages.not_found_company_exactly(company, company_alt, i+1, self.n_companies)
-                ########################################################
-                with open("not_found_company_exactly.txt", 'a') as file:
-                    file.write(f"{company};{company_alt}" + '\n')
-                ########################################################
             # Añade la compañía seleccionada
             add_company_button.click()
             self.companies_entered += 1

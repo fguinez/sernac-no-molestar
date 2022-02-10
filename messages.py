@@ -121,11 +121,6 @@ def end():
 ——————————————————————————————————————————————————
 """)
 
-def error_no_supported_browser_installed():
-    cprint("\nERROR:", 'red', attrs=['bold', 'reverse'], end=' ')
-    cprint(f"No tienes ningún navegador compatible instalado.", 'red', attrs=['bold'])
-    cprint(f"Instala Chrome o Firefox antes de continuar.", 'red', attrs=['bold'])
-
 def error_companies_not_found(companies_filename):
     cprint("\nERROR:", 'red', attrs=['bold', 'reverse'], end=' ')
     cprint(f"Archivo '{companies_filename}' no encontrado.", 'red', attrs=['bold'])
